@@ -3,8 +3,12 @@ import os
 from pathlib import Path
 
 template_dir = r"{{ cookiecutter._template }}"
+if "https:" in template_dir:
+    repo_name = template_dir.split("/")[-1]
+    template_dir = Path.home() / ".cookiecutters" / repo_name
+else:
+    template_dir = Path(template_dir)
 
-template_dir = Path(r"{{ cookiecutter._template }}")
 repo_dir = template_dir / ("{" + "{ cookiecutter.repo_name }" + "}")
 
 template_repo = "https://github.com/mysociety/template_notebook"
