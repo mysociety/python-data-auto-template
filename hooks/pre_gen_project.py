@@ -20,11 +20,11 @@ helper_branch = "main"
 os.system(f"cd {template_dir} && git submodule update --init --recursive")
 
 # update to latest version
-os.system(f'cd {repo_dir} && git reset --hard')
-os.system(f'cd {repo_dir} && git remote rm origin')
-os.system(f'cd {repo_dir} && git remote add origin "{template_repo}" && git fetch origin && git pull origin main && git checkout main')
+os.system(f'cd "{repo_dir}" && git reset --hard')
+os.system(f'cd "{repo_dir}" && git remote rm origin')
+os.system(f'cd "{repo_dir}" && git remote add origin "{template_repo}" && git fetch origin && git pull origin main && git checkout main')
 
-os.system(f'cd {repo_dir} && cd notebook_helper && git remote rm origin')
-os.system(f'cd {repo_dir} && cd notebook_helper && git remote add origin "{helper_repo}" && git fetch origin && git pull origin main && git checkout main')
+os.system(f'cd "{repo_dir}" && cd notebook_helper && git remote rm origin')
+os.system(f'cd "{repo_dir}" && cd notebook_helper && git remote add origin "{helper_repo}" && git fetch origin && git pull origin main && git checkout main')
 
 shutil.copyfile(Path(template_dir, "cookie-readme.md"), Path(repo_dir, "readme.md"))
