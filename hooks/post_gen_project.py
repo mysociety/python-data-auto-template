@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 
 template_dir = r"{{ cookiecutter._template }}"
-if "https:" in template_dir:
+if any(x in template_dir for x in ["https:", "gh:"]):
     repo_name = template_dir.split("/")[-1]
     template_dir = Path.home() / ".cookiecutters" / repo_name
 else:
