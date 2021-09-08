@@ -70,4 +70,4 @@ os.system(f'git remote rm origin')
 
 # package all up in a little box
 os.system("git add --all")
-os.system('git commit -m "Post-templating commit" --author="Cookie Cutter" ')
+os.system('git commit -m "Post-templating commit" --author="Alex Parsons <alex.parsons@mysociety.org>" ')
