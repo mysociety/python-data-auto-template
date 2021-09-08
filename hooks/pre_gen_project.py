@@ -27,4 +27,8 @@ os.system(f'cd "{repo_dir}" && git remote add origin "{template_repo}" && git fe
 os.system(f'cd "{repo_dir}" && cd notebook_helper && git remote rm origin')
 os.system(f'cd "{repo_dir}" && cd notebook_helper && git remote add origin "{helper_repo}" && git fetch origin && git pull origin main && git checkout main')
 
-shutil.copyfile(Path(template_dir, "cookie-readme.md"), Path(repo_dir, "readme.md"))
+source_readme = Path(template_dir, "cookie-readme.md")
+dest_readme = Path(repo_dir, "readme.md")
+
+print(f"Copying {source_readme} to {dest_readme}")
+shutil.copyfile(source_readme, dest_readme)
