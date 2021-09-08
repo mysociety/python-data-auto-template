@@ -1,6 +1,8 @@
-# Cookie cutter template
+# Cookie cutter notebook template template
 
 Template generator wrapper for https://github.com/mysociety/template_notebook.
+
+Uses [Cookie Cutter](https://github.com/cookiecutter/cookiecutter).
 
 To create a new blank notebook template:
 
