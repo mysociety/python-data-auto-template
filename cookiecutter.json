@@ -1,0 +1,6 @@
+{
+    "project_name": "Example Repo",
+    "repo_name": "{{ cookiecutter.project_name.lower().replace(' ', '_') }}",
+    "description": "A short description of the project.",
+    "_copy_without_render": [".git"]
+}
