@@ -1,6 +1,6 @@
 {
     "repo_name": "snake_case_repo_name",
-    "project_name": "{{ cookiecutter.repo_name.replace(' ', '_').title() }}",
+    "project_name": "{{ cookiecutter.repo_name.replace('_', ' ').title() }}",
     "github_id": "user/repo",
     "description": "A short description of the project.",
     "_copy_without_render": [".git"]
