@@ -29,7 +29,7 @@ os.system(f'cd "{repo_dir}" && cd notebook_helper && git remote add origin "{hel
 
 source_readme = Path(template_dir, "cookie-readme.md")
 dest_readme = Path(repo_dir, "readme.md")
-dest_readme = Path(repo_dir, "notebooks-readme.md")
+general_readme = Path(repo_dir, "notebooks-readme.md")
 
 print(f"Copying {dest_readme} to {general_readme}")
 shutil.copyfile(dest_readme, general_readme)
