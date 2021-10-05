@@ -5,6 +5,6 @@
 
 {{ cookiecutter.description }}
 
-This repository is avaliable online at https://github.com/{{ cookiecutter.github_id }}s
+This repository is avaliable online at https://github.com/{{ cookiecutter.github_id }}
 
 Instructions on using the features of this notebook are avaliable in [notebooks-readme.md](notebooks-readme.md).
