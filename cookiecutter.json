@@ -3,5 +3,5 @@
     "project_name": "{{ cookiecutter.repo_name.replace('_', ' ').title() }}",
     "github_id": "user/repo",
     "description": "A short description of the project.",
-    "_copy_without_render": [".git", "render.yaml", ".github"]
+    "_copy_without_render": [".git", "render.yaml", "notebook_helper/.github"]
 }
