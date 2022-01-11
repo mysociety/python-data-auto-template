@@ -31,8 +31,5 @@ source_readme = Path(template_dir, "cookie-readme.md")
 dest_readme = Path(repo_dir, "readme.md")
 general_readme = Path(repo_dir, "notebooks-readme.md")
 
-print(f"Copying {dest_readme} to {general_readme}")
-shutil.copyfile(dest_readme, general_readme)
-
 print(f"Copying {source_readme} to {dest_readme}")
 shutil.copyfile(source_readme, dest_readme)
