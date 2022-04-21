@@ -39,11 +39,11 @@ with open(notebook_git_config, "w") as f:
         if "cookiecutter.repo_name" not in line:
             f.write(line)
         else:
-            f.write("	worktree = ../../../src/data_common\n")
+            f.write("	worktree = ../../../../src/data_common\n")
 
 # adjust the git directory for the notebook helper
 with open(Path("src","data_common",".git"), "w") as file:
-    file.write("gitdir: ../.git/modules/src/data_common")
+    file.write("gitdir: ../../.git/modules/src/data_common")
 
 #copy example env to env
 shutil.copyfile(Path(".env-example"),
