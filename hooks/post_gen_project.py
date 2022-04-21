@@ -9,18 +9,19 @@ if any(x in template_dir for x in ["https:", "gh:"]):
 else:
     template_dir = Path(template_dir)
 
-template_repo = "https://github.com/mysociety/template_notebook"
+template_repo = "https://github.com/mysociety/template_data_repo"
 template_branch = "main"
 
-helper_repo = "https://github.com/mysociety/notebook_helper"
+helper_repo = "https://github.com/mysociety/data_common"
 helper_branch = "main"
+
 
 # this was all a submodule in the template, now it stands alone. Need to copy across the git info.
 Path(".git").unlink()
 real_git_folder = Path(template_dir) / ".git" / "modules" / ("{" + "{ cookiecutter.repo_name }" + "}")
 shutil.copytree(real_git_folder, ".git")
 git_config = Path(".git", "config")
-notebook_git_config = Path(".git","modules", "notebook_helper", "config")
+notebook_git_config = Path(".git","modules", "data_common", "config")
 
 # remove reference to the work tree above
 with open(git_config, "r") as f:
@@ -38,11 +39,11 @@ with open(notebook_git_config, "w") as f:
         if "cookiecutter.repo_name" not in line:
             f.write(line)
         else:
-            f.write("	worktree = ../../../notebook_helper\n")
+            f.write("	worktree = ../../../src/data_common\n")
 
 # adjust the git directory for the notebook helper
-with open(Path("notebook_helper",".git"), "w") as file:
-    file.write("gitdir: ../.git/modules/notebook_helper")
+with open(Path("data_common",".git"), "w") as file:
+    file.write("gitdir: ../.git/modules/data_common")
 
 #copy example env to env
 shutil.copyfile(Path(".env-example"),

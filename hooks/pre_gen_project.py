@@ -10,7 +10,10 @@ else:
     template_dir = Path(template_dir)
 
 
-def amend_file(filepath: Path, replace: dict = {}):
+def amend_file(filepath: Path, replace: dict):
+    """
+    amend a file to use cookiecutter basics
+    """
     with open(filepath, "r") as f:
         txt = f.read()
     for key, value in replace.items():
@@ -23,6 +26,7 @@ def amend_file(filepath: Path, replace: dict = {}):
         filename = filename.replace(key, value)
     if str(filepath) != filename:
         filepath.rename(filename)
+
 
 repo_dir = template_dir / ("{" + "{ cookiecutter.repo_name }" + "}")
 
@@ -52,18 +56,19 @@ shutil.copyfile(source_readme, dest_readme)
 # Amend files that have a direct reference to the original name
 
 replace = {"template_data_repo": "{" + "{ cookiecutter.repo_name }" + "}",
-            "description": "{" + "{ cookiecutter.description }" + "}"}
+           "description": "{" + "{ cookiecutter.description }" + "}"}
 
-amend_file(Path(repo_dir, "pyproject.toml"), replace )
-amend_file(Path(repo_dir, "docker-compose.yml"), replace )
-amend_file(Path(repo_dir, "Dockerfile.dev"), replace )
-amend_file(Path(repo_dir, "Dockerfile"), replace )
-amend_file(Path(repo_dir, "tests", "test_template_data_repo.py"), replace )
+amend_file(Path(repo_dir, "pyproject.toml"), replace)
+amend_file(Path(repo_dir, "docker-compose.yml"), replace)
+amend_file(Path(repo_dir, "Dockerfile.dev"), replace)
+amend_file(Path(repo_dir, "Dockerfile"), replace)
+amend_file(Path(repo_dir, "tests", "test_template_data_repo.py"), replace)
 
 to_delete = [Path(repo_dir, ".github", "workflows", "docker-image.yml")]
 
 package_dir = Path(repo_dir, "src", "template_data_repo")
-package_dir.rename(Path(repo_dir, "src", "{" + "{ cookiecutter.repo_name }" + "}"))
+package_dir.rename(
+    Path(repo_dir, "src", "{" + "{ cookiecutter.repo_name }" + "}"))
 
 for f in to_delete:
     f.unlink()
