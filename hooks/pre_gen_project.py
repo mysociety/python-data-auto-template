@@ -13,13 +13,13 @@ else:
 def amend_file(filepath: Path, replace: dict = {}):
     with open(filepath, "r") as f:
         txt = f.read()
-    for key, value in replace:
+    for key, value in replace.items():
         txt = txt.replace(key, value)
     with open(filepath, "w") as f:
         f.write(txt)
 
     filename = str(filepath)
-    for key, value in replace:
+    for key, value in replace.items():
         filename = filename.replace(key, value)
     if str(filepath) != filename:
         filepath.rename(filename)
