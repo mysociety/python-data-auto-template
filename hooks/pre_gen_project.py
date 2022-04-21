@@ -62,5 +62,7 @@ amend_file(Path(repo_dir, "tests", "test_template_data_repo.py"), replace )
 
 to_delete = [Path(repo_dir, ".github", "workflows", "docker-image.yml")]
 
+Path(repo_dir, "src", "template_data_repo").rename(repo_dir, "src", "{" + "{ cookiecutter.repo_name }" + "}")
+
 for f in to_delete:
     f.unlink()
