@@ -21,7 +21,7 @@ Path(".git").unlink()
 real_git_folder = Path(template_dir) / ".git" / "modules" / ("{" + "{ cookiecutter.repo_name }" + "}")
 shutil.copytree(real_git_folder, ".git")
 git_config = Path(".git", "config")
-notebook_git_config = Path(".git","modules", "data_common", "config")
+notebook_git_config = Path(".git","modules", "src", "data_common", "config")
 
 # remove reference to the work tree above
 with open(git_config, "r") as f:
@@ -42,8 +42,8 @@ with open(notebook_git_config, "w") as f:
             f.write("	worktree = ../../../src/data_common\n")
 
 # adjust the git directory for the notebook helper
-with open(Path("data_common",".git"), "w") as file:
-    file.write("gitdir: ../.git/modules/data_common")
+with open(Path("src","data_common",".git"), "w") as file:
+    file.write("gitdir: ../.git/modules/src/data_common")
 
 #copy example env to env
 shutil.copyfile(Path(".env-example"),
@@ -56,7 +56,7 @@ WINDOWS_LINE_ENDING = b'\r\n'
 UNIX_LINE_ENDING = b'\n'
 
 # relative or absolute file path, e.g.:
-file_path = Path("notebook_helper", "packages_setup.bash")
+file_path = Path("src","data_common", "bin", "packages_setup.bash")
 
 with open(file_path, 'rb') as open_file:
     content = open_file.read()
