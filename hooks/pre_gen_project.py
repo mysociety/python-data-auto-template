@@ -60,3 +60,7 @@ amend_file(Path(repo_dir, "Dockerfile.dev"), replace )
 amend_file(Path(repo_dir, "Dockerfile"), replace )
 amend_file(Path(repo_dir, "tests", "test_template_data_repo.py"), replace )
 
+to_delete = [Path(".github", "workflows", "docker-image.yml")]
+
+for f in to_delete:
+    f.unlink()
