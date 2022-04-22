@@ -71,4 +71,5 @@ package_dir.rename(
     Path(repo_dir, "src", "{" + "{ cookiecutter.repo_name }" + "}"))
 
 for f in to_delete:
-    f.unlink()
+    if f.exists():
+        f.unlink()
