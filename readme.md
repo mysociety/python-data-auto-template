@@ -7,7 +7,7 @@ Uses [Cookie Cutter](https://github.com/cookiecutter/cookiecutter).
 To create a new blank notebook template:
 
 ```
-cookiecutter https://github.com/mysociety/cookie_notebook
+cookiecutter https://github.com/mysociety/cookie_data_repo
 ```
 
 You will be prompted on setup settings.
