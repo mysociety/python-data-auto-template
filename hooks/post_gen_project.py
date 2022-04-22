@@ -1,5 +1,6 @@
 import shutil
 import os
+import subprocess
 from pathlib import Path
 
 template_dir = r"{{ cookiecutter._template }}"
@@ -68,6 +69,18 @@ with open(file_path, 'wb') as open_file:
 
 # remove, we don't want this project to have a default origin of the template library
 os.system(f'git remote rm origin')
+
+data_common_tag = "data_common:sha-" + subprocess.check_output("git submodule status src/data_common", shell=True).decode().strip()[:7]
+
+file_path = Path("Dockerfile.dev")
+
+with open(file_path, 'rb') as open_file:
+    content = open_file.read()
+    
+content = content.replace("data_common:latest", data_common_tag)
+
+with open(file_path, 'wb') as open_file:
+    open_file.write(content)
 
 # package all up in a little box
 os.system("git add --all")
