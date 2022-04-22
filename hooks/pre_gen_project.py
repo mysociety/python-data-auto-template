@@ -56,7 +56,7 @@ shutil.copyfile(source_readme, dest_readme)
 # Amend files that have a direct reference to the original name
 
 replace = {"template_data_repo": "{" + "{ cookiecutter.repo_name }" + "}",
-           "description": "{" + "{ cookiecutter.description }" + "}"}
+           "Standardised template for mysociety data repositories": "{" + "{ cookiecutter.description }" + "}"}
 
 amend_file(Path(repo_dir, "pyproject.toml"), replace)
 amend_file(Path(repo_dir, "docker-compose.yml"), replace)
