@@ -67,20 +67,22 @@ content = content.replace(WINDOWS_LINE_ENDING, UNIX_LINE_ENDING)
 with open(file_path, 'wb') as open_file:
     open_file.write(content)
 
+# Lock the upstream docker image source at point of departure from template
+
+data_common_tag = b"data_common:sha-" + subprocess.check_output("git submodule status src/data_common", shell=True).strip()[1:8]
+
+for d in ["Dockerfile", "Dockerfile.dev"]:
+
+    with open(d, 'rb') as open_file:
+        content = open_file.read()
+        
+    content = content.replace(b"data_common:latest", data_common_tag)
+
+    with open(d, 'wb') as open_file:
+        open_file.write(content)
+
 # remove, we don't want this project to have a default origin of the template library
 os.system(f'git remote rm origin')
-
-data_common_tag = b"data_common:sha-" + subprocess.check_output("git submodule status src/data_common", shell=True).strip()[:7]
-
-file_path = Path("Dockerfile.dev")
-
-with open(file_path, 'rb') as open_file:
-    content = open_file.read()
-    
-content = content.replace(b"data_common:latest", data_common_tag)
-
-with open(file_path, 'wb') as open_file:
-    open_file.write(content)
 
 # package all up in a little box
 os.system("git add --all")
