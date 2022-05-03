@@ -69,11 +69,13 @@ with open(file_path, 'wb') as open_file:
 
 # Lock the upstream docker image source at point of departure from template
 
-data_common_tag = b"data_common:sha-" + subprocess.check_output("git submodule status src/data_common", shell=True).strip()
+data_common_tag = subprocess.check_output("git submodule status src/data_common", shell=True).strip()
 if data_common_tag[0] == b"+":
     data_common_tag = data_common_tag[1:8]
 else:
     data_common_tag = data_common_tag[:7]
+
+data_common_tag = b"data_common:sha-" + data_common_tag
 
 for d in ["Dockerfile", "Dockerfile.dev"]:
 
