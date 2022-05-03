@@ -70,7 +70,7 @@ with open(file_path, 'wb') as open_file:
 # Lock the upstream docker image source at point of departure from template
 
 data_common_tag = subprocess.check_output("git submodule status src/data_common", shell=True).strip()
-data_common_tag = data_common_tag.replace("+", "")
+data_common_tag = data_common_tag.replace(b"+", b"")
 data_common_tag = data_common_tag[:7]
 
 data_common_tag = b"data_common:sha-" + data_common_tag
