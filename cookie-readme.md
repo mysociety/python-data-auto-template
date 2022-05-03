@@ -5,8 +5,8 @@
 
 {{ cookiecutter.description }}
 
-This repository is avaliable online at https://github.com/{{ cookiecutter.github_id }}
+This repository is available online at https://github.com/{{ cookiecutter.github_id }}
 
 If Github Pages are enabled, the URL is: https://mysociety.github.io/{{ cookiecutter.github_id.split("/")[1] }}/
 
-Instructions on using the features of this notebook are avaliable in [notebooks-readme.md](notebooks-readme.md).
+Instructions on using the features of this notebook are available in [notebooks-readme.md](notebooks-readme.md).
