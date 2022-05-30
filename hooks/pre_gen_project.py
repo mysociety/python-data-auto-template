@@ -63,6 +63,9 @@ amend_file(Path(repo_dir, "docker-compose.yml"), replace)
 amend_file(Path(repo_dir, "Dockerfile.dev"), replace)
 amend_file(Path(repo_dir, "Dockerfile"), replace)
 amend_file(Path(repo_dir, "tests", "test_template_data_repo.py"), replace)
+amend_file(Path(repo_dir, "docs", "index.md"), replace)
+amend_file(Path(repo_dir, "docs", "_config.yml"), replace)
+
 
 to_delete = [Path(repo_dir, ".github", "workflows", "docker-image.yml")]
 
