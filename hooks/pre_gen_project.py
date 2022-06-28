@@ -58,6 +58,7 @@ shutil.copyfile(source_readme, dest_readme)
 replace = {"template_data_repo": "{" + "{ cookiecutter.repo_name }" + "}",
            "Standardised template for mysociety data repositories": "{" + "{ cookiecutter.description }" + "}"}
 
+amend_file(Path(repo_dir, ".devcontainer", "devcontainer.json"), replace)
 amend_file(Path(repo_dir, "pyproject.toml"), replace)
 amend_file(Path(repo_dir, "docker-compose.yml"), replace)
 amend_file(Path(repo_dir, "Dockerfile.dev"), replace)
