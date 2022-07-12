@@ -60,10 +60,10 @@ shutil.copyfile(source_readme, dest_readme)
 
 replace = {
     "title: template_data_repo": "title: {" + "{ cookiecutter.project_name }" + "}",
-    'baseurl: "/template_data_repo"': "baseurl: /"
+    'baseurl: "/template_data_repo"': 'baseurl: "/'
     + "{"
     + "{ cookiecutter.repo_name }"
-    + "}""",
+    + '}"',
     "template_data_repo": "{" + "{ cookiecutter.underscored }" + "}",
     "Standardised template for mysociety data repositories": "{"
     + "{ cookiecutter.description }"
