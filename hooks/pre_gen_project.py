@@ -20,7 +20,6 @@ def amend_file(filepath: Path, replace: dict):
         txt = txt.replace(key, value)
     with open(filepath, "w") as f:
         f.write(txt)
-
     filename = str(filepath)
     for key, value in replace.items():
         filename = filename.replace(key, value)
@@ -41,10 +40,14 @@ os.system(f"cd {template_dir} && git submodule update --init --recursive")
 # update to latest version
 os.system(f'cd "{repo_dir}" && git reset --hard')
 os.system(f'cd "{repo_dir}" && git remote rm origin')
-os.system(f'cd "{repo_dir}" && git remote add origin "{template_repo}" && git fetch origin && git pull origin main && git checkout main')
+os.system(
+    f'cd "{repo_dir}" && git remote add origin "{template_repo}" && git fetch origin && git pull origin main && git checkout main'
+)
 
 os.system(f'cd "{repo_dir}" && cd src/data_common && git remote rm origin')
-os.system(f'cd "{repo_dir}" && cd src/data_common && git remote add origin "{helper_repo}" && git fetch origin && git pull origin main && git checkout main')
+os.system(
+    f'cd "{repo_dir}" && cd src/data_common && git remote add origin "{helper_repo}" && git fetch origin && git pull origin main && git checkout main'
+)
 
 source_readme = Path(template_dir, "cookie-readme.md")
 dest_readme = Path(repo_dir, "readme.md")
@@ -55,8 +58,18 @@ shutil.copyfile(source_readme, dest_readme)
 
 # Amend files that have a direct reference to the original name
 
-replace = {"template_data_repo": "{" + "{ cookiecutter.underscored }" + "}",
-           "Standardised template for mysociety data repositories": "{" + "{ cookiecutter.description }" + "}"}
+replace = {
+    "title: template_data_repo": "title: {" + "{ cookiecutter.project_name }" + "}",
+    'baseurl: "/template_data_repo"': "baseurl: "
+    + "{"
+    + "{ cookiecutter.repo_name }"
+    + "}""",
+    "template_data_repo": "{" + "{ cookiecutter.underscored }" + "}",
+    "Standardised template for mysociety data repositories": "{"
+    + "{ cookiecutter.description }"
+    + "}",
+}
+
 
 amend_file(Path(repo_dir, ".devcontainer", "devcontainer.json"), replace)
 amend_file(Path(repo_dir, "pyproject.toml"), replace)
@@ -70,8 +83,7 @@ amend_file(Path(repo_dir, "docs", "_config.yml"), replace)
 to_delete = [Path(repo_dir, ".github", "workflows", "docker-image.yml")]
 
 package_dir = Path(repo_dir, "src", "template_data_repo")
-package_dir.rename(
-    Path(repo_dir, "src", "{" + "{ cookiecutter.underscored }" + "}"))
+package_dir.rename(Path(repo_dir, "src", "{" + "{ cookiecutter.underscored }" + "}"))
 
 for f in to_delete:
     if f.exists():
