@@ -3,5 +3,5 @@
     "project_name": "{{ cookiecutter.repo_name.replace('_', ' ').title() }}",
     "github_id": "user/repo",
     "description": "A short description of the project.",
-    "_copy_without_render": [".git", "render.yaml", "src/data_common/.github", "src/data_common/src/data_common/resources/dataset_template", ".github"]
+    "_copy_without_render": [".git", "notebooks/_render_config/default.yaml", "src/data_common/.github", "src/data_common/src/data_common/resources/dataset_template", ".github"]
 }
