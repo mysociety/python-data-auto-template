@@ -1,5 +1,7 @@
 {
     "repo_name": "snake_case_repo_name",
+    "hyphenated": "{{ '-'.join(cookiecutter['repo_name'].lower().split()).replace('_', '-') }}",
+    "underscored": "{{ cookiecutter.hyphenated.replace('-', '_') }}",
     "project_name": "{{ cookiecutter.repo_name.replace('_', ' ').title() }}",
     "github_id": "user/repo",
     "description": "A short description of the project.",

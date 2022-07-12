@@ -55,7 +55,7 @@ shutil.copyfile(source_readme, dest_readme)
 
 # Amend files that have a direct reference to the original name
 
-replace = {"template_data_repo": "{" + "{ cookiecutter.repo_name }" + "}",
+replace = {"template_data_repo": "{" + "{ cookiecutter.underscored }" + "}",
            "Standardised template for mysociety data repositories": "{" + "{ cookiecutter.description }" + "}"}
 
 amend_file(Path(repo_dir, ".devcontainer", "devcontainer.json"), replace)
@@ -67,12 +67,11 @@ amend_file(Path(repo_dir, "tests", "test_template_data_repo.py"), replace)
 amend_file(Path(repo_dir, "docs", "index.md"), replace)
 amend_file(Path(repo_dir, "docs", "_config.yml"), replace)
 
-
 to_delete = [Path(repo_dir, ".github", "workflows", "docker-image.yml")]
 
 package_dir = Path(repo_dir, "src", "template_data_repo")
 package_dir.rename(
-    Path(repo_dir, "src", "{" + "{ cookiecutter.repo_name }" + "}"))
+    Path(repo_dir, "src", "{" + "{ cookiecutter.underscored }" + "}"))
 
 for f in to_delete:
     if f.exists():
