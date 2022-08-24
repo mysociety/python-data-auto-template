@@ -1,0 +1,78 @@
+name: Run cookiecutter on first push
+
+on: [push]
+
+jobs:
+  run-cookiecutter:
+    if: ${{ !endsWith(github.repository, '-auto-template')  }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ github.head_ref }}
+
+      - name: Install cookiecutter
+        run: pip3 install cookiecutter
+
+      - uses: actions/github-script@v4
+        id: fetch-repo-and-user-details
+        with:
+          script: |
+            const query = `query($owner:String!, $name:String!) {
+              repository(owner:$owner, name:$name) {
+                name
+                description
+                owner {
+                  login
+                  ... on User {
+                    name
+                  }
+                  ... on Organization {
+                    name
+                  }
+                }
+              }
+            }`;
+            const variables = {
+              owner: context.repo.owner,
+              name: context.repo.repo
+            }
+            const result = await github.graphql(query, variables)
+            console.log(result)
+            return result
+
+      - name: Rebuild contents using cookiecutter
+        env:
+          INFO: ${{ steps.fetch-repo-and-user-details.outputs.result }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Delete this workflow:
+          rm -rf .github
+          rm -rf .git
+          export REPO_NAME=$(echo $INFO | jq -r '.repository.name')
+          export REPO_NAME=$(echo $INFO | jq -r '.repository.name')
+          git config --global user.name "Cookie Cutter"
+          git config --global user.email "<>"
+          # Run cookiecutter
+          pushd /tmp
+          cookiecutter $GITHUB_WORKSPACE --no-input \
+            project_name=$REPO_NAME \
+            repo_name=$REPO_NAME \
+            github_id=$GITHUB_REPOSITORY \
+            description="$(echo $INFO | jq -r .repository.description)"
+          # move into generated project and push to replace current template
+          cd /tmp/$REPO_NAME
+          git remote add origin https://$GITHUB_ACTOR:$TOKEN@github.com/$GITHUB_REPOSITORY.git
+          git push --force --set-upstream origin main
+
+      - name: "enable github pages workflow option"
+        uses: actions/github-script@v6
+        continue-on-error: true
+        with:
+          script: |
+            github.request('POST /repos/{owner}/{repo}/pages', {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              build_type: 'workflow'
+            })
