@@ -1,0 +1,21 @@
+name: Run meta pytest suite on repo
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  run-test:
+    if: ${{ endsWith(github.repository, '-auto-template')  }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: ${{ github.head_ref }}
+
+      - name: Install cookiecutter
+        run: pip install pytest cookiecutter poetry
+
+      - name: run pytest
+        run: python -m pytest
