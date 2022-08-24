@@ -11,7 +11,6 @@ else:
     if template_dir.is_absolute() is False:
         raise ValueError("If specifying a specific directory, it needs to be an absolute path")
 
-
 def amend_file(filepath: Path, replace: dict):
     """
     amend a file to use cookiecutter basics
@@ -37,19 +36,21 @@ template_branch = "main"
 helper_repo = "https://github.com/mysociety/data_common"
 helper_branch = "main"
 
-os.system(f"cd {template_dir} && git submodule update --init --recursive")
+# allow a env variable to override the template updating to latest version
+# this allows testing of the template
+if os.environ.get("UPDATE_TO_LATEST", "true").lower() == "true":
+    os.system(f"cd {template_dir} && git submodule update --init --recursive")
+    # update to latest version
+    os.system(f'cd "{repo_dir}" && git reset --hard')
+    os.system(f'cd "{repo_dir}" && git remote rm origin')
+    os.system(
+        f'cd "{repo_dir}" && git remote add origin "{template_repo}" && git fetch origin && git pull origin main && git checkout main'
+    )
 
-# update to latest version
-os.system(f'cd "{repo_dir}" && git reset --hard')
-os.system(f'cd "{repo_dir}" && git remote rm origin')
-os.system(
-    f'cd "{repo_dir}" && git remote add origin "{template_repo}" && git fetch origin && git pull origin main && git checkout main'
-)
-
-os.system(f'cd "{repo_dir}" && cd src/data_common && git remote rm origin')
-os.system(
-    f'cd "{repo_dir}" && cd src/data_common && git remote add origin "{helper_repo}" && git fetch origin && git pull origin main && git checkout main'
-)
+    os.system(f'cd "{repo_dir}" && cd src/data_common && git remote rm origin')
+    os.system(
+        f'cd "{repo_dir}" && cd src/data_common && git remote add origin "{helper_repo}" && git fetch origin && git pull origin main && git checkout main'
+    )
 
 source_readme = Path(template_dir, "cookie-readme.md")
 dest_readme = Path(repo_dir, "readme.md")
