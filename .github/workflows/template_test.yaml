@@ -14,6 +14,10 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.head_ref }}
 
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10' 
+
       - name: Install cookiecutter
         run: pip install pytest cookiecutter poetry
 
