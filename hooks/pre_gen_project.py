@@ -39,18 +39,24 @@ helper_branch = "main"
 # allow a env variable to override the template updating to latest version
 # this allows testing of the template
 if os.environ.get("UPDATE_TO_LATEST", "true").lower() == "true":
+    print("using UPDATE_TO_LATEST")
+    print("updating submodule")
     os.system(f"cd {template_dir} && git submodule update --init --recursive")
     # update to latest version
+    print("resetting main to latest commit")
     os.system(f'cd "{repo_dir}" && git reset --hard')
+
+    print("resetting origin to the template wiki and pullonig down latest")
     os.system(f'cd "{repo_dir}" && git remote rm origin')
     os.system(
         f'cd "{repo_dir}" && git remote add origin "{template_repo}" && git fetch origin && git pull origin main && git checkout main'
     )
-
+    print("doing the same for the data_common repo")
     os.system(f'cd "{repo_dir}" && cd src/data_common && git remote rm origin')
     os.system(
         f'cd "{repo_dir}" && cd src/data_common && git remote add origin "{helper_repo}" && git fetch origin && git pull origin main && git checkout main'
     )
+    print("done")
 else:
     print("UPDATE_TO_LATEST disabled.")
 

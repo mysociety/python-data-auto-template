@@ -48,10 +48,6 @@ jobs:
           INFO: ${{ steps.fetch-repo-and-user-details.outputs.result }}
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Delete this workflow:
-          rm -rf .github
-          rm -rf .git
-          export REPO_NAME=$(echo $INFO | jq -r '.repository.name')
           export REPO_NAME=$(echo $INFO | jq -r '.repository.name')
           git config --global user.name "Cookie Cutter"
           git config --global user.email "<>"

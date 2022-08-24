@@ -87,6 +87,12 @@ for d in ["Dockerfile", "Dockerfile.dev"]:
     with open(d, 'wb') as open_file:
         open_file.write(content)
 
+# remove templates we haven't already copied into the higher level
+bad_workflows = [Path(".github", "workflows", "template_meta_test.yaml")]
+
+for w in bad_workflows:
+    w.unlink()
+
 if os.environ.get("UPDATE_TO_LATEST", "true").lower() == "true":
 
     # remove, we don't want this project to have a default origin of the template library
