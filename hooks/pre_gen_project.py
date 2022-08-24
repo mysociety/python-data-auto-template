@@ -8,6 +8,8 @@ if any(x in template_dir for x in ["https:", "gh:"]):
     template_dir = Path.home() / ".cookiecutters" / repo_name
 else:
     template_dir = Path(template_dir)
+    if template_dir.is_absolute() is False:
+        raise ValueError("If specifying a specific directory, it needs to be an absolute path")
 
 
 def amend_file(filepath: Path, replace: dict):
