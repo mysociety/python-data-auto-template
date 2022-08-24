@@ -51,6 +51,8 @@ if os.environ.get("UPDATE_TO_LATEST", "true").lower() == "true":
     os.system(
         f'cd "{repo_dir}" && cd src/data_common && git remote add origin "{helper_repo}" && git fetch origin && git pull origin main && git checkout main'
     )
+else:
+    print("UPDATE_TO_LATEST disabled.")
 
 source_readme = Path(template_dir, "cookie-readme.md")
 dest_readme = Path(repo_dir, "readme.md")
