@@ -20,13 +20,9 @@ helper_branch = "main"
 # this was all a submodule in the template, now it stands alone. Need to copy across the git info.
 # this is made conditional because in a templating test it won't be set up this way, but also that's fine. 
 if os.environ.get("UPDATE_TO_LATEST", "true").lower() == "true":
-    git_location = Path(".git")
-    if git_location.is_dir is False:
-        git_location.unlink()
-    else:
-        shutil.rmtree(str(git_location))
-        real_git_folder = Path(template_dir) / ".git" / "modules" / ("{" + "{ cookiecutter.repo_name }" + "}")
-        shutil.copytree(real_git_folder, ".git")
+    Path(".git").unlink()
+    real_git_folder = Path(template_dir) / ".git" / "modules" / ("{" + "{ cookiecutter.repo_name }" + "}")
+    shutil.copytree(real_git_folder, ".git")
     git_config = Path(".git", "config")
     notebook_git_config = Path(".git","modules", "src", "data_common", "config")
 
