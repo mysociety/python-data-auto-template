@@ -19,37 +19,38 @@ helper_branch = "main"
 
 # this was all a submodule in the template, now it stands alone. Need to copy across the git info.
 # this is made conditional because in a templating test it won't be set up this way, but also that's fine. 
-git_location = Path(".git")
-if git_location.is_dir is False:
-    git_location.unlink()
-else:
-    shutil.rmtree(str(git_location))
-    real_git_folder = Path(template_dir) / ".git" / "modules" / ("{" + "{ cookiecutter.repo_name }" + "}")
-    shutil.copytree(real_git_folder, ".git")
-git_config = Path(".git", "config")
-notebook_git_config = Path(".git","modules", "src", "data_common", "config")
+if os.environ.get("UPDATE_TO_LATEST", "true").lower() == "true":
+    git_location = Path(".git")
+    if git_location.is_dir is False:
+        git_location.unlink()
+    else:
+        shutil.rmtree(str(git_location))
+        real_git_folder = Path(template_dir) / ".git" / "modules" / ("{" + "{ cookiecutter.repo_name }" + "}")
+        shutil.copytree(real_git_folder, ".git")
+    git_config = Path(".git", "config")
+    notebook_git_config = Path(".git","modules", "src", "data_common", "config")
 
-# remove reference to the work tree above
-with open(git_config, "r") as f:
-    lines = f.readlines()
-with open(git_config, "w") as f:
-    for line in lines:
-        if "cookiecutter.repo_name" not in line:
-            f.write(line)
+    # remove reference to the work tree above
+    with open(git_config, "r") as f:
+        lines = f.readlines()
+    with open(git_config, "w") as f:
+        for line in lines:
+            if "cookiecutter.repo_name" not in line:
+                f.write(line)
 
-# remove reference to the work tree above
-with open(notebook_git_config, "r") as f:
-    lines = f.readlines()
-with open(notebook_git_config, "w") as f:
-    for line in lines:
-        if "cookiecutter.repo_name" not in line:
-            f.write(line)
-        else:
-            f.write("	worktree = ../../../../src/data_common\n")
+    # remove reference to the work tree above
+    with open(notebook_git_config, "r") as f:
+        lines = f.readlines()
+    with open(notebook_git_config, "w") as f:
+        for line in lines:
+            if "cookiecutter.repo_name" not in line:
+                f.write(line)
+            else:
+                f.write("	worktree = ../../../../src/data_common\n")
 
-# adjust the git directory for the notebook helper
-with open(Path("src","data_common",".git"), "w") as file:
-    file.write("gitdir: ../../.git/modules/src/data_common")
+    # adjust the git directory for the notebook helper
+    with open(Path("src","data_common",".git"), "w") as file:
+        file.write("gitdir: ../../.git/modules/src/data_common")
 
 #copy example env to env
 shutil.copyfile(Path(".env-example"),
@@ -90,9 +91,11 @@ for d in ["Dockerfile", "Dockerfile.dev"]:
     with open(d, 'wb') as open_file:
         open_file.write(content)
 
-# remove, we don't want this project to have a default origin of the template library
-os.system(f'git remote rm origin')
+if os.environ.get("UPDATE_TO_LATEST", "true").lower() == "true":
 
-# package all up in a little box
-os.system("git add --all")
-os.system('git commit -m "Post-templating commit"')
+    # remove, we don't want this project to have a default origin of the template library
+    os.system(f'git remote rm origin')
+
+    # package all up in a little box
+    os.system("git add --all")
+    os.system('git commit -m "Post-templating commit"')
