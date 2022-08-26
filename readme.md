@@ -14,8 +14,11 @@ You can also use [Cookie Cutter](https://github.com/cookiecutter/cookiecutter).
 
 To create a new blank notebook template:
 
-```
-cookiecutter gh:mysociety/python-data-auto-template
+```bash
+# if python installed but cookiecutter isn't
+pip install cookiecutter
+# then
+python -m cookiecutter gh:mysociety/python-data-auto-template
 ```
 
 You will be prompted on setup settings.
