@@ -75,6 +75,7 @@ replace = {
     + "{"
     + "{ cookiecutter.repo_name }"
     + '}"',
+    "template_data_repo:${TAG:-latest}": "{" + "{ cookiecutter.repo_name }" + "}:${TAG:-latest}",
     "template_data_repo": "{" + "{ cookiecutter.underscored }" + "}",
     "Standardised template for mysociety data repositories": "{"
     + "{ cookiecutter.description }"
