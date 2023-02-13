@@ -5,5 +5,10 @@
     "project_name": "{{ cookiecutter.hyphenated.replace('-', ' ').title() }}",
     "github_id": "mysociety/{{ cookiecutter.repo_name }}",
     "description": "A short description of the project.",
-    "_copy_without_render": [".git", "notebooks/_render_config/default.yaml", "src/data_common/.github", "src/data_common/src/data_common/resources/dataset_template", ".github", "docs/theme"]
+    "_copy_without_render": [".git",
+                             "notebooks/_render_config/default.yaml",
+                             "src/data_common/.github",
+                             "src/data_common",
+                             ".github",
+                             "docs/theme"]
 }
