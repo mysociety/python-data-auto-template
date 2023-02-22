@@ -2,6 +2,10 @@ name: Run cookiecutter on first push
 
 on: [push]
 
+permissions:
+  actions: write
+  contents: write
+
 jobs:
   run-cookiecutter:
     if: ${{ !endsWith(github.repository, '-auto-template')  }}
