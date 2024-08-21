@@ -77,7 +77,7 @@ data_common_tag = data_common_tag[:7]
 
 data_common_tag = b"data_common:sha-" + data_common_tag
 
-for d in ["Dockerfile", "Dockerfile.dev"]:
+for d in ["Dockerfile"]:
 
     with open(d, 'rb') as open_file:
         content = open_file.read()

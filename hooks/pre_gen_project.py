@@ -86,7 +86,7 @@ replace = {
 amend_file(Path(repo_dir, ".devcontainer", "devcontainer.json"), replace)
 amend_file(Path(repo_dir, "pyproject.toml"), replace)
 amend_file(Path(repo_dir, "docker-compose.yml"), replace)
-amend_file(Path(repo_dir, "Dockerfile.dev"), replace)
+# amend_file(Path(repo_dir, "Dockerfile.dev"), replace)
 amend_file(Path(repo_dir, "Dockerfile"), replace)
 amend_file(Path(repo_dir, "tests", "test_template_data_repo.py"), replace)
 amend_file(Path(repo_dir, "docs", "index.md"), replace)
