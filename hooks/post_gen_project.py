@@ -52,16 +52,36 @@ def copy_repository_metadata() -> None:
     # repository directory. Use --file from outside the generated repository so
     # Git does not try to follow the stale worktree while changing the config.
     generated_git = generated_git.resolve()
-    run_git(
+    config_path = generated_git / "config"
+    worktree = subprocess.run(
         [
+            "git",
             "config",
             "--file",
-            str(generated_git / "config"),
-            "--unset-all",
+            str(config_path),
+            "--get-all",
             "core.worktree",
         ],
+        check=False,
         cwd=template_dir,
+        capture_output=True,
+        text=True,
     )
+    if worktree.returncode == 0:
+        run_git(
+            [
+                "config",
+                "--file",
+                str(config_path),
+                "--unset-all",
+                "core.worktree",
+            ],
+            cwd=template_dir,
+        )
+    elif worktree.returncode != 1:
+        # Exit 1 means the optional key is absent. Other failures, such as an
+        # unreadable or malformed config, must still stop project generation.
+        worktree.check_returncode()
     data_common_git_dir = Path(".git/modules/src/data_common")
     if data_common_git_dir.exists():
         # Keep the helper as a real submodule and redirect its copied metadata to
