@@ -1,103 +1,117 @@
+from __future__ import annotations
+
 import shutil
-import os
 import subprocess
 from pathlib import Path
 
-template_dir = r"{{ cookiecutter._template }}"
-if any(x in template_dir for x in ["https:", "gh:"]):
-    repo_name = template_dir.split("/")[-1]
-    template_dir = Path.home() / ".cookiecutters" / repo_name
+# Resolve the original auto-template checkout in the same way as the pre-hook;
+# this is where the nested template's real Git directory is stored.
+template_dir_value = r"{{ cookiecutter._template }}"
+if any(prefix in template_dir_value for prefix in ("https:", "gh:")):
+    template_name = template_dir_value.rstrip("/").split("/")[-1]
+    template_dir = Path.home() / ".cookiecutters" / template_name
 else:
-    template_dir = Path(template_dir)
+    template_dir = Path(template_dir_value)
 
-template_repo = "https://github.com/mysociety/template_data_repo"
-template_branch = "main"
-
-helper_repo = "https://github.com/mysociety/data_common"
-helper_branch = "main"
+placeholder = "{" + "{ cookiecutter.repo_name }" + "}"
+source_repository = template_dir / placeholder
 
 
-# this was all a submodule in the template, now it stands alone. Need to copy across the git info.
-# this is made conditional because in a templating test it won't be set up this way, but also that's fine. 
-if os.environ.get("UPDATE_TO_LATEST", "true").lower() == "true":
-    Path(".git").unlink()
-    real_git_folder = Path(template_dir) / ".git" / "modules" / ("{" + "{ cookiecutter.repo_name }" + "}")
-    shutil.copytree(real_git_folder, ".git")
-    git_config = Path(".git", "config")
-    notebook_git_config = Path(".git","modules", "src", "data_common", "config")
+def run_git(arguments: list[str], cwd: Path | None = None) -> None:
+    """
+    Run Git and fail the conversion if the command is unsuccessful.
+    """
+    subprocess.run(["git", *arguments], check=True, cwd=cwd)
 
-    # remove reference to the work tree above
-    with open(git_config, "r") as f:
-        lines = f.readlines()
-    with open(git_config, "w") as f:
-        for line in lines:
-            if "cookiecutter.repo_name" not in line:
-                f.write(line)
 
-    # remove reference to the work tree above
-    with open(notebook_git_config, "r") as f:
-        lines = f.readlines()
-    with open(notebook_git_config, "w") as f:
-        for line in lines:
-            if "cookiecutter.repo_name" not in line:
-                f.write(line)
-            else:
-                f.write("	worktree = ../../../../src/data_common\n")
+def copy_repository_metadata() -> None:
+    """
+    Turn the copied template submodule into a standalone Git repository.
 
-    # adjust the git directory for the notebook helper
-    with open(Path("src","data_common",".git"), "w") as file:
-        file.write("gitdir: ../../.git/modules/src/data_common")
+    Cookiecutter copies the submodule's `.git` pointer, which still refers to
+    metadata in the auto-template checkout. Copying that metadata preserves the
+    template commit and its pinned `src/data_common` gitlink.
+    """
+    result = subprocess.run(
+        ["git", "rev-parse", "--absolute-git-dir"],
+        check=True,
+        cwd=source_repository,
+        capture_output=True,
+        text=True,
+    )
+    source_git_dir = Path(result.stdout.strip())
+    generated_git = Path(".git")
+    if generated_git.is_dir():
+        shutil.rmtree(generated_git)
+    else:
+        generated_git.unlink(missing_ok=True)
+    shutil.copytree(source_git_dir, generated_git)
 
-#copy example env to env
-shutil.copyfile(Path(".env-example"),
-                Path(".env"))
+    # The copied config still points its worktree at the placeholder directory
+    # inside the auto-template. Removing that setting makes Git use this new
+    # repository directory. Use --file from outside the generated repository so
+    # Git does not try to follow the stale worktree while changing the config.
+    generated_git = generated_git.resolve()
+    run_git(
+        [
+            "config",
+            "--file",
+            str(generated_git / "config"),
+            "--unset-all",
+            "core.worktree",
+        ],
+        cwd=template_dir,
+    )
+    data_common_git_dir = Path(".git/modules/src/data_common")
+    if data_common_git_dir.exists():
+        # Keep the helper as a real submodule and redirect its copied metadata to
+        # the generated repository's src/data_common working tree.
+        data_common_config = data_common_git_dir.resolve() / "config"
+        run_git(
+            [
+                "config",
+                "--file",
+                str(data_common_config),
+                "core.worktree",
+                "../../../../src/data_common",
+            ],
+            cwd=template_dir,
+        )
+    Path("src/data_common/.git").write_text(
+        "gitdir: ../../.git/modules/src/data_common\n"
+    )
 
-# when doing this on windows, sometimes clones bad line endings. 
-# This fixes the bash file docker uses. 
-# replacement strings
-WINDOWS_LINE_ENDING = b'\r\n'
-UNIX_LINE_ENDING = b'\n'
 
-# relative or absolute file path, e.g.:
-file_path = Path("src","data_common", "bin", "packages_setup.bash")
+copy_repository_metadata()
+# Local development expects .env, while .env-example remains the committed
+# reference file.
+shutil.copyfile(Path(".env-example"), Path(".env"))
 
-with open(file_path, 'rb') as open_file:
-    content = open_file.read()
-    
-content = content.replace(WINDOWS_LINE_ENDING, UNIX_LINE_ENDING)
+packages_setup = Path("src/data_common/bin/packages_setup.bash")
+if packages_setup.exists():
+    # A Windows checkout can introduce CRLF endings that prevent this Bash
+    # script from running inside the Linux development container.
+    packages_setup.write_bytes(packages_setup.read_bytes().replace(b"\r\n", b"\n"))
 
-with open(file_path, 'wb') as open_file:
-    open_file.write(content)
+# This workflow tests the auto-template and must not ship in projects created
+# from it. Project workflows under workflows-templates remain available.
+template_workflow = Path(".github/workflows/template_meta_test.yaml")
+template_workflow.unlink(missing_ok=True)
 
-# Lock the upstream docker image source at point of departure from template
-
-data_common_tag = subprocess.check_output("git submodule status src/data_common", shell=True).strip()
-data_common_tag = data_common_tag.replace(b"+", b"")
-data_common_tag = data_common_tag[:7]
-
-data_common_tag = b"data_common:sha-" + data_common_tag
-
-for d in ["Dockerfile"]:
-
-    with open(d, 'rb') as open_file:
-        content = open_file.read()
-        
-    content = content.replace(b"data_common:latest", data_common_tag)
-
-    with open(d, 'wb') as open_file:
-        open_file.write(content)
-
-# remove templates we haven't already copied into the higher level
-bad_workflows = [Path(".github", "workflows", "template_meta_test.yaml")]
-
-for w in bad_workflows:
-    w.unlink()
-
-if os.environ.get("UPDATE_TO_LATEST", "true").lower() == "true":
-
-    # remove, we don't want this project to have a default origin of the template library
-    os.system(f'git remote rm origin')
-
-    # package all up in a little box
-    os.system("git add --all")
-    os.system('git commit -m "Post-templating commit"')
+# Detach the generated repository from the upstream template remote and capture
+# all rendered changes in the standalone repository's initial conversion commit.
+# Supply an identity for this mechanical commit because fresh CI runners and
+# local machines are not guaranteed to have user.name and user.email configured.
+run_git(["remote", "remove", "origin"])
+run_git(["add", "--all"])
+run_git(
+    [
+        "-c",
+        "user.name=Cookie Cutter",
+        "-c",
+        "user.email=cookiecutter@localhost",
+        "commit",
+        "-m",
+        "Post-templating commit",
+    ]
+)
